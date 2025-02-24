@@ -1,0 +1,60 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: testHollowSquare
+      id: testhollowsquare
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testHollowSquare
+        setup-command: pip install pytest
+        command: pytest test_lab5.py::test_hollow_square
+        timeout: 1
+        max-score: 25
+    - name: testNumberPattern
+      id: testnumberpattern
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testNumberPattern
+        setup-command: pip install pytest
+        command: pytest test_lab5.py::test_number_pattern
+        timeout: 1
+        max-score: 25
+    - name: testSumOfNaturalNumbers
+      id: testsumofnaturalnumbers
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testSumOfNaturalNumbers
+        setup-command: pip install pytest
+        command: pytest test_lab5.py::test_sum_of_natural_numbers
+        timeout: 1
+        max-score: 25
+    - name: testCenteredStarPyramid
+      id: testcenteredstarpyramid
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testCenteredStarPyramid
+        setup-command: pip install pytest
+        command: pytest test_lab5.py::test_centered_star_pyramid
+        timeout: 1
+        max-score: 25
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TESTHOLLOWSQUARE_RESULTS: "${{steps.testhollowsquare.outputs.result}}"
+        TESTNUMBERPATTERN_RESULTS: "${{steps.testnumberpattern.outputs.result}}"
+        TESTSUMOFNATURALNUMBERS_RESULTS: "${{steps.testsumofnaturalnumbers.outputs.result}}"
+        TESTCENTEREDSTARPYRAMID_RESULTS: "${{steps.testcenteredstarpyramid.outputs.result}}"
+      with:
+        runners: testhollowsquare,testnumberpattern,testsumofnaturalnumbers,testcenteredstarpyramid
